@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Build folder
+build/
+
+# vscode folder
+.vscode/
+
+CMakeLists.txt.user
