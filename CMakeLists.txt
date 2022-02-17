@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(test VERSION 0.1 LANGUAGES CXX)
+project(QtTest VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -40,7 +40,7 @@ else()
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(test
+        add_executable(QtTest
             ${PROJECT_SOURCES}
         )
     endif()
