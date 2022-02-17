@@ -11,8 +11,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
+#find_package(Armadillo REQUIRED)
+#find_package(PythonLibs REQUIRED)
+
+include_directories(
+    ${PYTHON_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
         base.h
@@ -20,40 +25,27 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        mainwindow.ui
-)
+        mainwindow.ui)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(test
+    qt_add_executable(QtTest
         MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET test APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+        ${PROJECT_SOURCES})
 else()
-    if(ANDROID)
-        add_library(test SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
         add_executable(QtTest
-            ${PROJECT_SOURCES}
-        )
-    endif()
+            ${PROJECT_SOURCES})
 endif()
 
-target_link_libraries(test PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(QtTest PRIVATE
+#    ${PYTHON_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Core)
 
-set_target_properties(test PROPERTIES
+set_target_properties(QtTest PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-)
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(test)
+    qt_finalize_executable(QtTest)
 endif()
