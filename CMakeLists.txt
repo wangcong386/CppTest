@@ -13,8 +13,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
-find_package(Armadillo REQUIRED)
-find_package(PythonLibs REQUIRED)
+#find_package(Armadillo REQUIRED)
+#find_package(PythonLibs REQUIRED)
 
 include_directories(
     ${PYTHON_INCLUDE_DIRS})
@@ -28,30 +28,18 @@ set(PROJECT_SOURCES
         mainwindow.ui)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(test
+    qt_add_executable(QtTest
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES})
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET test APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
-    if(ANDROID)
-        add_library(QtTest SHARED
-            ${PROJECT_SOURCES})
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
         add_executable(QtTest
             ${PROJECT_SOURCES})
-    endif()
 endif()
 
-target_link_libraries(QtTest
-    ${PYTHON_LIBRARIES}
+target_link_libraries(QtTest PRIVATE
+#    ${PYTHON_LIBRARIES}
     Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Core
-    armadillo)
+    Qt${QT_VERSION_MAJOR}::Core)
 
 set_target_properties(QtTest PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
