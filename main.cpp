@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <armadillo>
 #include <iostream>
+#include <vector>
 
 #include "mainwindow.h"
 
@@ -111,16 +112,19 @@ int main(int argc, char* argv[]) {
   */
 
 #pragma region 测试armadillo {
-  QVector<double> vQt = {0.1, 0.2, 0.3, 0.4, 0.5};
-  std::vector<double> vStd = vQt.toStdVector();
-  arma::rowvec vArma(vStd);
-  qDebug() << "均值:" << arma::mean(vArma);
-  qDebug() << "标准差:" << arma::stddev(vArma);
+//  QVector<double> vQt = {0.1, 0.2, 0.3, 0.4, 0.5};
+//  std::vector<double> vStd = vQt.toStdVector();
+//  arma::rowvec vArma(vStd);
+//  qDebug() << "均值:" << arma::mean(vArma);
+//  qDebug() << "标准差:" << arma::stddev(vArma);
 
-  arma::rowvec vArmaFlip = arma::fliplr(vArma);
-  std::cout << "vArmaFlip:" << vArmaFlip << std::endl;
+//  arma::rowvec vArmaFlip = arma::fliplr(vArma);
+//  std::cout << "vArmaFlip:" << vArmaFlip << std::endl;
 
 #pragma endregion }
+
+  std::vector<double> vTest;
+  vTest.size();
   w.show();
   return a.exec();
 }
