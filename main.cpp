@@ -3,7 +3,6 @@
 #include <QRandomGenerator>
 #include <QVector>
 #include <algorithm>
-#include <armadillo>
 #include <iostream>
 #include <vector>
 
@@ -12,17 +11,6 @@
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
   MainWindow w;
-#pragma region 测试armadillo {
-  //  QVector<double> vQt = {0.1, 0.2, 0.3, 0.4, 0.5};
-  //  std::vector<double> vStd = vQt.toStdVector();
-  //  arma::rowvec vArma(vStd);
-  //  qDebug() << "均值:" << arma::mean(vArma);
-  //  qDebug() << "标准差:" << arma::stddev(vArma);
-
-  //  arma::rowvec vArmaFlip = arma::fliplr(vArma);
-  //  std::cout << "vArmaFlip:" << vArmaFlip << std::endl;
-
-#pragma endregion }
 
 #pragma region 引用测试 {
   int ival = 1.01;

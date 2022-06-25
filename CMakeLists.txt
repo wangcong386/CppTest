@@ -13,11 +13,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
-#find_package(Armadillo REQUIRED)
-#find_package(PythonLibs REQUIRED)
-
-include_directories(
-    ${PYTHON_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
         base.h
@@ -37,14 +32,8 @@ else()
 endif()
 
 target_link_libraries(QtTest PRIVATE
-#    ${PYTHON_LIBRARIES}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Core)
-
-set_target_properties(QtTest PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(QtTest)
