@@ -1,2 +1,2 @@
-# QtTest
-Qt测试学习程序
+# CppTest
+Qt/C++测试学习程序
