@@ -11,30 +11,22 @@ set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 set(PROJECT_SOURCES
-        base.h
-        base.cpp
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui)
+    son.h
+    son.cpp
+    father.h
+    father.cpp
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(QtTest
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES})
-else()
-        add_executable(QtTest
-            ${PROJECT_SOURCES})
-endif()
+add_executable(QtTest
+    ${PROJECT_SOURCES})
 
 target_link_libraries(QtTest PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Core)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(QtTest)
-endif()
+    Qt5::Widgets
+    Qt5::Core)
