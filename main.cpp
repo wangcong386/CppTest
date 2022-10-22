@@ -61,6 +61,30 @@ int main(int argc, char* argv[]) {
   }
 #pragma endregion }
 
+#pragma region QVector转字符串 {
+  if (true) {
+    QVector<uint16_t> vU16Input;
+    // 初始化数组
+    for (uint16_t u16Idx = 100; u16Idx < 120; u16Idx++) {
+      vU16Input.push_back(u16Idx);
+    }
+    // 数组转换为QString
+    const QChar* pCharTest1 = reinterpret_cast<QChar*>(vU16Input.data());
+    QString sTest(pCharTest1, vU16Input.size() * sizeof(uint16_t));
+    qDebug() << "sTest" << sTest;
+    qDebug() << "size of sTest" << sTest.length();
+
+    // QString重新转换为数组
+    QVector<uint16_t> vU16Output;
+    uint16_t* pU16Val = reinterpret_cast<uint16_t*>(sTest.data());
+    for (int nIdx = 0; nIdx < sTest.length() / sizeof(uint16_t); nIdx++) {
+      vU16Output.push_back(*pU16Val);
+      pU16Val++;
+    }
+    qDebug() << "vU16Output" << vU16Output;
+  }
+#pragma endregion }
+
 #pragma region QVector删除元素 {
   if (false) {
     QVector<Test> vTest;
@@ -115,10 +139,93 @@ int main(int argc, char* argv[]) {
 #pragma endregion }
 
 #pragma region char* 数组测试 {
-  if (true) {
+  if (false) {
     const char* charTest[] = {"X", "Y"};
 
     qDebug() << sizeof(charTest) / sizeof(char*);
+  }
+#pragma endregion }
+
+#pragma region char* 数组指针测试 {
+  if (false) {
+    struct testStruct {
+      testStruct() {
+        a = 1;
+        b = 2;
+      }
+      int a;
+      int b;
+    };
+    QVector<testStruct*> vPtrTestStruct;
+    vPtrTestStruct.resize(2);
+    //    qDebug() << vPtrTestStruct[0]->a;
+    // 以上测试表明无法通过resize为数组指针构造相应的实体对象
+
+    qDebug() << vPtrTestStruct.size();
+    vPtrTestStruct[0] = new testStruct;
+    qDebug() << vPtrTestStruct[0]->a;
+    //    qDebug() << vPtrTestStruct[1]->a;
+    // 以上测试表明为数组指针构造相应的实体对象需要new
+  }
+#pragma endregion }
+
+#pragma region 数字转字符串大小是否改变 {
+  if (false) {
+    QString sTest1;
+    int nVal1 = 10;
+    double dVal1 = 10.000000001;
+    int nVal2 = 1000000;
+    uint8_t u8Val = 10;
+    uint16_t u16Val = 1000;
+    uint32_t u32Val = 10;
+    sTest1 = QString::number(nVal1);
+    qDebug() << sTest1.length();
+
+    sTest1 = QString::number(nVal2);
+    qDebug() << sTest1.length();
+
+    sTest1 = QString ::number(dVal1);
+    qDebug() << sTest1.length();
+
+    sTest1 = QString::number(u8Val);
+    qDebug() << sTest1.length();
+
+    sTest1 = QString::number(u16Val);
+    qDebug() << sTest1.length();
+
+    sTest1 = QString::number(u32Val);
+    qDebug() << sTest1.length();
+  }
+#pragma endregion }
+
+#pragma region 操作符测试 {
+  if (false) {
+    int nVal1 = 10;
+    qDebug() << nVal1 % 256;
+    qDebug() << nVal1 % 3;
+  }
+#pragma endregion }
+
+#pragma region QByteArray测试 {
+  if (false) {
+    // uint16_t数组转换成QByteArray
+    QVector<uint16_t> vTest;
+    for (uint16_t u16Idx = 0; u16Idx < 10; u16Idx++) {
+      vTest.push_back(u16Idx);
+    }
+    char* pTest = reinterpret_cast<char*>(vTest.data());
+    QByteArray arrTest(
+        QByteArray::fromRawData(pTest, sizeof(uint16_t) * vTest.size()));
+    qDebug() << "arrTest size" << arrTest.size();
+
+    // QByteArray转换成uint16_t数组
+    QVector<uint16_t> vOutput;
+    uint16_t* p16Output = reinterpret_cast<uint16_t*>(arrTest.data());
+    for (int nIdx = 0; nIdx < arrTest.size() / sizeof(uint16_t); nIdx++) {
+      vOutput.push_back(*p16Output);
+      p16Output++;
+    }
+    qDebug() << "vOutput" << vOutput;
   }
 #pragma endregion }
   w.show();
