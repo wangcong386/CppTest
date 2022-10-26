@@ -19,6 +19,36 @@ struct Test {
   int m_nVal1;
   int m_nVal2;
 };
+
+int StringToU16Array(const QString& str, QVector<uint16_t>& u16Array) {
+  u16Array.clear();
+  int nArrSize = str.toLatin1().size() / sizeof(uint16_t);
+  int nRestByteCnt = str.toLatin1().size() % sizeof(uint16_t);
+  if (nRestByteCnt != 0) {
+    u16Array.resize(nArrSize + 1);
+  } else {
+    u16Array.resize(nArrSize);
+  }
+  qDebug() << "str.toLatin1().size()" << str.toLatin1().size();
+  const uint16_t* pU16Array =
+      reinterpret_cast<const uint16_t*>(str.toLatin1().data());
+  for (int nArrIdx = 0; nArrIdx < nArrSize; nArrIdx++) {
+    u16Array[nArrIdx] = *pU16Array;
+    pU16Array++;
+  }
+  if (nRestByteCnt != 0) {
+    const uint8_t* pU8RestByte = reinterpret_cast<const uint8_t*>(pU16Array);
+    u16Array.last() = static_cast<uint16_t>(*pU8RestByte);
+  }
+  return 0;
+}
+
+QString U16ArrayToString(const QVector<uint16_t>& u16Array) {
+  const char* pChar = reinterpret_cast<const char*>(u16Array.data());
+  QString ret = QString::fromLatin1(pChar, u16Array.size() * sizeof(uint16_t));
+  return ret;
+}
+
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
   MainWindow w;
@@ -61,8 +91,22 @@ int main(int argc, char* argv[]) {
   }
 #pragma endregion }
 
+#pragma region 正则表达式 {
+  if (false) {
+    QRegExp regExp(QString("^\\[\\w*\\]$"));
+    QString sTest1("[wang]");
+    if (regExp.exactMatch(sTest1)) {
+      sTest1 = sTest1.left(2);
+      sTest1.chop(1);
+      qDebug() << sTest1;
+    } else {
+      qWarning() << sTest1 << "不符合正则表达";
+    }
+  }
+#pragma endregion }
+
 #pragma region QVector转字符串 {
-  if (true) {
+  if (false) {
     QVector<uint16_t> vU16Input;
     // 初始化数组
     for (uint16_t u16Idx = 100; u16Idx < 120; u16Idx++) {
@@ -99,6 +143,90 @@ int main(int argc, char* argv[]) {
       }
     }
     qDebug() << vTest.size();
+  }
+#pragma endregion }
+
+#pragma region QVector字节数 / 大小 {
+  if (false) {
+    QVector<int> vTest;
+    for (int nIdx = 0; nIdx < 3; nIdx++) {
+      vTest.push_back(nIdx);
+    }
+    qDebug() << vTest;
+    qDebug() << vTest.size();
+    qDebug() << vTest.length() * sizeof(int);
+
+    vTest.resize(10);
+    qDebug() << vTest;
+    qDebug() << vTest.size();
+    qDebug() << vTest.length() * sizeof(int);
+  }
+#pragma endregion }
+
+#pragma region QString字节数 / 大小 {
+  if (false) {
+    QString sTest("12345");
+
+    qDebug() << sTest;
+    qDebug() << sTest.size();
+    qDebug() << sTest.length();
+    qDebug() << sTest.toLocal8Bit().size();
+    qDebug() << sizeof(sTest);
+
+    sTest = QString("abcd");
+    qDebug() << sTest;
+    qDebug() << sTest.size();
+    qDebug() << sTest.length();
+    qDebug() << sTest.toLocal8Bit().size();
+    qDebug() << sizeof(sTest);
+
+    sTest = QString("王淙正在编程王淙正在睡觉");
+    qDebug() << sTest;
+    qDebug() << sTest.size();
+    qDebug() << sTest.length();
+    qDebug() << sTest.toLocal8Bit().size();
+    qDebug() << sizeof(sTest);
+  }
+#pragma endregion }
+
+#pragma region StringToU16Array测试 {
+  if (false) {
+    QString sTest("123456712312421353256456746");
+    qDebug() << sTest.toLocal8Bit().size();
+    qDebug() << sTest.toLocal8Bit();
+    QVector<uint16_t> vU16Test;
+    StringToU16Array(sTest, vU16Test);
+    qDebug() << "vU16Test" << vU16Test;
+    qDebug() << "vU16Test.size()" << vU16Test.size();
+  }
+#pragma endregion }
+
+#pragma region U16ArrayToString测试 {
+  if (false) {
+    QVector<uint16_t> vTest;
+    for (uint16_t u16Idx = 0; u16Idx < 10; u16Idx++) {
+      vTest.push_back(u16Idx);
+    }
+    qDebug() << vTest;
+    QString sTest = U16ArrayToString(vTest);
+    qDebug() << sTest;
+  }
+#pragma endregion }
+
+#pragma region StringToU16Array / U16ArrayToString联合测试 {
+  if (true) {
+    QVector<uint16_t> vTestInput, vTestOutput;
+    for (uint16_t u16Idx = 65322; u16Idx < 65411; u16Idx++) {
+      vTestInput.push_back(u16Idx);
+    }
+    qDebug() << "vTestInput" << vTestInput;
+    qDebug() << "vTestInput.size()" << vTestInput.size();
+    QString sTest = U16ArrayToString(vTestInput);
+    qDebug() << "sTest.toLatin1().size()" << sTest.toLatin1().size();
+    qDebug() << "sTest.size()" << sTest.size();
+
+    StringToU16Array(sTest, vTestOutput);
+    qDebug() << vTestOutput;
   }
 #pragma endregion }
 
@@ -210,7 +338,7 @@ int main(int argc, char* argv[]) {
   if (false) {
     // uint16_t数组转换成QByteArray
     QVector<uint16_t> vTest;
-    for (uint16_t u16Idx = 0; u16Idx < 10; u16Idx++) {
+    for (uint16_t u16Idx = 110; u16Idx < 140; u16Idx++) {
       vTest.push_back(u16Idx);
     }
     char* pTest = reinterpret_cast<char*>(vTest.data());
