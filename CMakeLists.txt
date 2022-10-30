@@ -11,9 +11,20 @@ set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+# find qt
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 
+if(QT_FOUND)
+    message("QT_VERSION_MAJOR = ${QT_VERSION_MAJOR}")
+    message("QT_VERSION_MAJOR = ${QT_VERSION_MINOR}")
+    message("QT_VERSION_PATCH = ${QT_VERSION_PATCH}")
+    message("Qt${QT_VERSION_MAJOR}_DIR = ${Qt${QT_VERSION_MAJOR}_DIR}")
+endif(QT_FOUND)
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+# find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
+# find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 set(PROJECT_SOURCES
     son.h
     son.cpp
@@ -24,9 +35,27 @@ set(PROJECT_SOURCES
     mainwindow.h
     mainwindow.ui)
 
-add_executable(QtTest
-    ${PROJECT_SOURCES})
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(QtTest
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
+else()
+    if(ANDROID)
+        add_library(QtTest SHARED
+            ${PROJECT_SOURCES}
+        )
+    else()
+        add_executable(QtTest
+            ${PROJECT_SOURCES}
+        )
+    endif()
+endif()
 
 target_link_libraries(QtTest PRIVATE
-    Qt5::Widgets
-    Qt5::Core)
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Core)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(QtTest)
+endif()
