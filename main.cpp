@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QRandomGenerator>
+#include <QRegExp>
 #include <QVector>
 #include <QtEndian>
 #include <algorithm>
@@ -137,11 +138,6 @@ int main(int argc, char* argv[]) {
       vTest.push_back(test);
     }
 
-    for (const Test& ele : vTest) {
-      if (ele.m_nVal1 == 1) {
-        vTest.indexOf(ele);
-      }
-    }
     qDebug() << vTest.size();
   }
 #pragma endregion }
@@ -227,23 +223,6 @@ int main(int argc, char* argv[]) {
 
     StringToU16Array(sTest, vTestOutput);
     qDebug() << vTestOutput;
-  }
-#pragma endregion }
-
-#pragma region 系统时间 {
-  if (false) {
-    QVector<Test> vTest;
-    for (int nIdx = 0; nIdx < 3; nIdx++) {
-      Test test = {.m_nVal1 = nIdx, .m_nVal2 = nIdx};
-      vTest.push_back(test);
-    }
-
-    for (const Test& ele : vTest) {
-      if (ele.m_nVal1 == 1) {
-        vTest.indexOf(ele);
-      }
-    }
-    qDebug() << vTest.size();
   }
 #pragma endregion }
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(QtTest VERSION 0.1 LANGUAGES CXX)
+project(MiscTest VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -21,8 +21,9 @@ if(QT_FOUND)
     message("Qt${QT_VERSION_MAJOR}_DIR = ${Qt${QT_VERSION_MAJOR}_DIR}")
 endif(QT_FOUND)
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Core5Compat)
+endif()
 # find_package(QT NAMES Qt5 COMPONENTS Core Widgets REQUIRED)
 # find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 set(PROJECT_SOURCES
@@ -36,26 +37,33 @@ set(PROJECT_SOURCES
     mainwindow.ui)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(QtTest
+    qt_add_executable(MiscTest
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 else()
     if(ANDROID)
-        add_library(QtTest SHARED
+        add_library(MiscTest SHARED
             ${PROJECT_SOURCES}
         )
     else()
-        add_executable(QtTest
+        add_executable(MiscTest
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(QtTest PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MiscTest PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    target_link_libraries(MiscTest PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core5Compat)
+else()
+    target_link_libraries(MiscTest PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(QtTest)
+    qt_finalize_executable(MiscTest)
 endif()
