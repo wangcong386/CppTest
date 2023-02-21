@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
 #include <QRandomGenerator>
 #include <QRegExp>
 #include <QVector>
@@ -210,7 +211,7 @@ int main(int argc, char* argv[]) {
 #pragma endregion }
 
 #pragma region StringToU16Array / U16ArrayToString联合测试 {
-  if (true) {
+  if (false) {
     QVector<uint16_t> vTestInput, vTestOutput;
     for (uint16_t u16Idx = 65322; u16Idx < 65411; u16Idx++) {
       vTestInput.push_back(u16Idx);
@@ -333,6 +334,26 @@ int main(int argc, char* argv[]) {
       p16Output++;
     }
     qDebug() << "vOutput" << vOutput;
+  }
+#pragma endregion }
+
+#pragma region QDir测试 {
+  if (false) {
+    // 空字符串表示文件夹是否会被判定为存在
+    QString sTestDir = "";
+    QDir dirTest(sTestDir);
+    if (dirTest.exists()) {
+      qDebug() << "文件夹" << sTestDir << "存在";
+    } else {
+      qDebug() << "文件夹" << sTestDir << "不存在";
+    }
+    // 结论：空字符串也会被认为文件夹存在，因此需要使用以下方式判断
+    QFileInfo fileInfo(sTestDir);
+    if (fileInfo.isDir()) {
+      qDebug() << "文件夹" << sTestDir << "存在";
+    } else {
+      qDebug() << "文件夹" << sTestDir << "不存在";
+    }
   }
 #pragma endregion }
   w.show();
