@@ -53,6 +53,24 @@ QString U16ArrayToString(const QVector<uint16_t>& u16Array) {
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
   MainWindow w;
+#pragma region 数据类型大小 {
+  int n0;
+  short int n1;
+  long int n2;
+  long long int n3;
+  char c0;
+  bool b0;
+  float f0;
+  double d0;
+  std::cout << "size of int " << sizeof(n0) << std::endl;
+  std::cout << "size of short int " << sizeof(n1) << std::endl;
+  std::cout << "size of long int " << sizeof(n2) << std::endl;
+  std::cout << "size of long long int " << sizeof(n3) << std::endl;
+  std::cout << "size of char " << sizeof(c0) << std::endl;
+  std::cout << "size of bool " << sizeof(b0) << std::endl;
+  std::cout << "size of float " << sizeof(f0) << std::endl;
+  std::cout << "size of double " << sizeof(d0) << std::endl;
+#pragma endregion }
 #pragma region 继承 {
   if (false) {
     Father* pFatherObj = new Son;
