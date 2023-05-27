@@ -38,3 +38,6 @@ build/
 .vscode/
 
 CMakeLists.txt.user
+
+# qcustomplot
+qcustomplot/

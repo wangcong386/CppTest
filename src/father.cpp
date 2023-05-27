@@ -1,7 +1,10 @@
 #include "father.h"
+
 #include <QDebug>
 
-Father::Father(QObject *parent) : QObject(parent) {}
+Father::Father(QObject *parent) : QObject(parent) {
+  qDebug() << __func__ << "from Father";
+}
 
 void Father::FuncTest1(double dVal, std::string sVal) {
   qDebug() << __func__ << "from Father";
