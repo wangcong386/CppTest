@@ -1,4 +1,5 @@
 #include "son.h"
+
 #include <QDebug>
 
 Son::Son(QObject *parent) {}

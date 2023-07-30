@@ -2,14 +2,14 @@
 #define SON_H
 
 #include <QObject>
+
 #include "father.h"
 
-class Son : public Father
-{
+class Son : public Father {
   Q_OBJECT
-public:
+ public:
   explicit Son(QObject *parent = nullptr);
-  virtual ~Son() { qDebug() << "析构函数"; }
+  virtual ~Son() { qDebug() << __PRETTY_FUNCTION__ << "析构函数"; }
   // 测试：继承父类函数重写时参数不一样到什么程度会无法重写
   // 1.参数类型&数量&名称相同，关键字不同
   // 1.结论：重写生效
@@ -27,8 +27,8 @@ public:
   // 结论：参数数量或类型不同的同名函数，无法通过指针调用
   void FuncTest4(int nVal) override;
 
-protected:
+ protected:
   void FuncTest2() override;
 };
 
-#endif // SON_H
+#endif  // SON_H

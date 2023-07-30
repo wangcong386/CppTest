@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QRandomGenerator>
 #include <QRegExp>
+#include <QSharedPointer>
 #include <QVector>
 #include <QtEndian>
 #include <algorithm>
@@ -10,12 +11,10 @@
 #include <vector>
 
 #include "father.h"
-#include "testwindow.h"
 #include "son.h"
-struct Test
-{
-  bool operator==(const Test &test)
-  {
+#include "testwindow.h"
+struct Test {
+  bool operator==(const Test &test) {
     bool bRet = true;
     bRet &= test.m_nVal1 == this->m_nVal1 ? true : false;
     bRet &= test.m_nVal2 == this->m_nVal2 ? true : false;
@@ -25,73 +24,71 @@ struct Test
   int m_nVal2;
 };
 
-int StringToU16Array(const QString &str, QVector<uint16_t> &u16Array)
-{
+int StringToU16Array(const QString &str, QVector<uint16_t> &u16Array) {
   u16Array.clear();
   int nArrSize = str.toLatin1().size() / sizeof(uint16_t);
   int nRestByteCnt = str.toLatin1().size() % sizeof(uint16_t);
-  if (nRestByteCnt != 0)
-  {
+  if (nRestByteCnt != 0) {
     u16Array.resize(nArrSize + 1);
-  }
-  else
-  {
+  } else {
     u16Array.resize(nArrSize);
   }
   qDebug() << "str.toLatin1().size()" << str.toLatin1().size();
   const uint16_t *pU16Array =
       reinterpret_cast<const uint16_t *>(str.toLatin1().data());
-  for (int nArrIdx = 0; nArrIdx < nArrSize; nArrIdx++)
-  {
+  for (int nArrIdx = 0; nArrIdx < nArrSize; nArrIdx++) {
     u16Array[nArrIdx] = *pU16Array;
     pU16Array++;
   }
-  if (nRestByteCnt != 0)
-  {
+  if (nRestByteCnt != 0) {
     const uint8_t *pU8RestByte = reinterpret_cast<const uint8_t *>(pU16Array);
     u16Array.last() = static_cast<uint16_t>(*pU8RestByte);
   }
   return 0;
 }
 
-QString U16ArrayToString(const QVector<uint16_t> &u16Array)
-{
+QString U16ArrayToString(const QVector<uint16_t> &u16Array) {
   const char *pChar = reinterpret_cast<const char *>(u16Array.data());
   QString ret = QString::fromLatin1(pChar, u16Array.size() * sizeof(uint16_t));
   return ret;
 }
 
-void *TestVoid(int &nVal)
-{
-  return &nVal;
-}
+void *TestVoid(int &nVal) { return &nVal; }
 
-int main(int argc, char *argv[])
-{
+void TestSharedPointer(QSharedPointer<Father> &ptrFather) {
+  if (ptrFather.isNull() || ptrFather.dynamicCast<Son>() == NULL) {
+    qDebug() << "输入为空或无法强转为子类";
+    ptrFather.reset();
+    ptrFather = QSharedPointer<Father>(new Son);
+  }
+}
+int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
   TestWindow w;
 #pragma region 数据类型大小 {
-  int n0;
-  short int n1;
-  long int n2;
-  long long int n3;
-  char c0;
-  bool b0;
-  float f0;
-  double d0;
-  std::cout << "size of int " << sizeof(n0) << std::endl;
-  std::cout << "size of short int " << sizeof(n1) << std::endl;
-  std::cout << "size of long int " << sizeof(n2) << std::endl;
-  std::cout << "size of long long int " << sizeof(n3) << std::endl;
-  std::cout << "size of char " << sizeof(c0) << std::endl;
-  std::cout << "size of bool " << sizeof(b0) << std::endl;
-  std::cout << "size of float " << sizeof(f0) << std::endl;
-  std::cout << "size of double " << sizeof(d0) << std::endl;
+  if (false) {
+    int n0;
+    short int n1;
+    long int n2;
+    long long int n3;
+    char c0;
+    bool b0;
+    float f0;
+    double d0;
+    std::cout << "size of int " << sizeof(n0) << std::endl;
+    std::cout << "size of short int " << sizeof(n1) << std::endl;
+    std::cout << "size of long int " << sizeof(n2) << std::endl;
+    std::cout << "size of long long int " << sizeof(n3) << std::endl;
+    std::cout << "size of char " << sizeof(c0) << std::endl;
+    std::cout << "size of bool " << sizeof(b0) << std::endl;
+    std::cout << "size of float " << sizeof(f0) << std::endl;
+    std::cout << "size of double " << sizeof(d0) << std::endl;
+  }
+
 #pragma endregion }
 
 #pragma region 继承 {
-  if (false)
-  {
+  if (false) {
     Father *pFatherObj = new Son;
 
     pFatherObj->FuncTest1(1, "good");
@@ -103,8 +100,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 大小端 {
-  if (false)
-  {
+  if (false) {
     int nTest1 = 0x10495;
     int nRes1 = qFromBigEndian(nTest1);
     qDebug() << nRes1;
@@ -112,8 +108,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 字符串分段 {
-  if (false)
-  {
+  if (false) {
     QString sTest1 = "wang\rcong\r";
     QStringList sList1 = sTest1.split('\r');
     QString sTest2 = "wangcong\r";
@@ -124,8 +119,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 字符串指针 {
-  if (false)
-  {
+  if (false) {
     QString sTest1 = "wangcong";
     uint8_t *u8Test1 = reinterpret_cast<uint8_t *>(sTest1.data());
     qDebug() << (char *)u8Test1;
@@ -133,30 +127,24 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 正则表达式 {
-  if (false)
-  {
+  if (false) {
     QRegExp regExp(QString("^\\[\\w*\\]$"));
     QString sTest1("[wang]");
-    if (regExp.exactMatch(sTest1))
-    {
+    if (regExp.exactMatch(sTest1)) {
       sTest1 = sTest1.left(2);
       sTest1.chop(1);
       qDebug() << sTest1;
-    }
-    else
-    {
+    } else {
       qWarning() << sTest1 << "不符合正则表达";
     }
   }
 #pragma endregion }
 
 #pragma region QVector转字符串 {
-  if (false)
-  {
+  if (false) {
     QVector<uint16_t> vU16Input;
     // 初始化数组
-    for (uint16_t u16Idx = 100; u16Idx < 120; u16Idx++)
-    {
+    for (uint16_t u16Idx = 100; u16Idx < 120; u16Idx++) {
       vU16Input.push_back(u16Idx);
     }
     // 数组转换为QString
@@ -168,8 +156,7 @@ int main(int argc, char *argv[])
     // QString重新转换为数组
     QVector<uint16_t> vU16Output;
     uint16_t *pU16Val = reinterpret_cast<uint16_t *>(sTest.data());
-    for (int nIdx = 0; nIdx < sTest.length() / sizeof(uint16_t); nIdx++)
-    {
+    for (int nIdx = 0; nIdx < sTest.length() / sizeof(uint16_t); nIdx++) {
       vU16Output.push_back(*pU16Val);
       pU16Val++;
     }
@@ -178,11 +165,9 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region QVector删除元素 {
-  if (false)
-  {
+  if (false) {
     QVector<Test> vTest;
-    for (int nIdx = 0; nIdx < 3; nIdx++)
-    {
+    for (int nIdx = 0; nIdx < 3; nIdx++) {
       Test test = {.m_nVal1 = nIdx, .m_nVal2 = nIdx};
       vTest.push_back(test);
     }
@@ -192,11 +177,9 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region QVector字节数 / 大小 {
-  if (false)
-  {
+  if (false) {
     QVector<int> vTest;
-    for (int nIdx = 0; nIdx < 3; nIdx++)
-    {
+    for (int nIdx = 0; nIdx < 3; nIdx++) {
       vTest.push_back(nIdx);
     }
     qDebug() << vTest;
@@ -211,8 +194,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region QString字节数 / 大小 {
-  if (false)
-  {
+  if (false) {
     QString sTest("12345");
 
     qDebug() << sTest;
@@ -238,8 +220,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region StringToU16Array测试 {
-  if (false)
-  {
+  if (false) {
     QString sTest("123456712312421353256456746");
     qDebug() << sTest.toLocal8Bit().size();
     qDebug() << sTest.toLocal8Bit();
@@ -251,11 +232,9 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region U16ArrayToString测试 {
-  if (false)
-  {
+  if (false) {
     QVector<uint16_t> vTest;
-    for (uint16_t u16Idx = 0; u16Idx < 10; u16Idx++)
-    {
+    for (uint16_t u16Idx = 0; u16Idx < 10; u16Idx++) {
       vTest.push_back(u16Idx);
     }
     qDebug() << vTest;
@@ -265,11 +244,9 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region StringToU16Array / U16ArrayToString联合测试 {
-  if (false)
-  {
+  if (false) {
     QVector<uint16_t> vTestInput, vTestOutput;
-    for (uint16_t u16Idx = 65322; u16Idx < 65411; u16Idx++)
-    {
+    for (uint16_t u16Idx = 65322; u16Idx < 65411; u16Idx++) {
       vTestInput.push_back(u16Idx);
     }
     qDebug() << "vTestInput" << vTestInput;
@@ -284,8 +261,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region++ 赋值 {
-  if (false)
-  {
+  if (false) {
     int nTest = 0;
     int nRes = ++nTest;
     qDebug() << nTest << nRes;
@@ -293,8 +269,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region u8数组强转char {
-  if (false)
-  {
+  if (false) {
     uint8_t u8Test[] = {100, 101};
     int nStep = 2;
     printf("u8Test %p\n", u8Test);
@@ -305,8 +280,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region char* 数组测试 {
-  if (false)
-  {
+  if (false) {
     const char *charTest[] = {"X", "Y"};
 
     qDebug() << sizeof(charTest) / sizeof(char *);
@@ -314,12 +288,9 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region char* 数组指针测试 {
-  if (false)
-  {
-    struct testStruct
-    {
-      testStruct()
-      {
+  if (false) {
+    struct testStruct {
+      testStruct() {
         a = 1;
         b = 2;
       }
@@ -340,8 +311,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 数字转字符串大小是否改变 {
-  if (false)
-  {
+  if (false) {
     QString sTest1;
     int nVal1 = 10;
     double dVal1 = 10.000000001;
@@ -370,8 +340,7 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region 操作符测试 {
-  if (false)
-  {
+  if (false) {
     int nVal1 = 10;
     qDebug() << nVal1 % 256;
     qDebug() << nVal1 % 3;
@@ -379,12 +348,10 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region QByteArray测试 {
-  if (false)
-  {
+  if (false) {
     // uint16_t数组转换成QByteArray
     QVector<uint16_t> vTest;
-    for (uint16_t u16Idx = 110; u16Idx < 140; u16Idx++)
-    {
+    for (uint16_t u16Idx = 110; u16Idx < 140; u16Idx++) {
       vTest.push_back(u16Idx);
     }
     char *pTest = reinterpret_cast<char *>(vTest.data());
@@ -395,8 +362,7 @@ int main(int argc, char *argv[])
     // QByteArray转换成uint16_t数组
     QVector<uint16_t> vOutput;
     uint16_t *p16Output = reinterpret_cast<uint16_t *>(arrTest.data());
-    for (int nIdx = 0; nIdx < arrTest.size() / sizeof(uint16_t); nIdx++)
-    {
+    for (int nIdx = 0; nIdx < arrTest.size() / sizeof(uint16_t); nIdx++) {
       vOutput.push_back(*p16Output);
       p16Output++;
     }
@@ -405,39 +371,45 @@ int main(int argc, char *argv[])
 #pragma endregion }
 
 #pragma region QDir测试 {
-  if (false)
-  {
+  if (false) {
     // 空字符串表示文件夹是否会被判定为存在
     QString sTestDir = "";
     QDir dirTest(sTestDir);
-    if (dirTest.exists())
-    {
+    if (dirTest.exists()) {
       qDebug() << "文件夹" << sTestDir << "存在";
-    }
-    else
-    {
+    } else {
       qDebug() << "文件夹" << sTestDir << "不存在";
     }
     // 结论：空字符串也会被认为文件夹存在，因此需要使用以下方式判断
     QFileInfo fileInfo(sTestDir);
-    if (fileInfo.isDir())
-    {
+    if (fileInfo.isDir()) {
       qDebug() << "文件夹" << sTestDir << "存在";
-    }
-    else
-    {
+    } else {
       qDebug() << "文件夹" << sTestDir << "不存在";
     }
   }
 #pragma endregion }
 
 #pragma region void*测试 {
-  if (true)
-  {
+  if (false) {
     int nVal = 10;
     printf("nVal Addr %p\n", &nVal);
     void *pVal = TestVoid(nVal);
     printf("nVal Addr after func %p\n", pVal);
+  }
+#pragma endregion }
+
+#pragma region QSharedPointer测试 {
+  if (true) {
+    qDebug() << "-----------空指针构造-----------";
+    QSharedPointer<Father> ptrFather;
+    TestSharedPointer(ptrFather);
+    qDebug() << "-----------父类对象构造-----------";
+    QSharedPointer<Father> ptrFather_1(new Father);
+    TestSharedPointer(ptrFather_1);
+    qDebug() << "-----------子类对象构造-----------";
+    QSharedPointer<Father> ptrFather_2(new Son);
+    TestSharedPointer(ptrFather_2);
   }
 #pragma endregion }
 
